@@ -7,6 +7,8 @@ const port = process.env.PORT || 3000;
 const connectToDatabase = require('./db/connect');
 connectToDatabase();
 
+app.use(express.json());
+
 
 // route connection
 const userRouter = require('./routers/userRouter');
