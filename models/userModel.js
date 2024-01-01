@@ -22,6 +22,10 @@ const userSchema = new Schema(
         message: props => `${props.value} is not a valid email!`
       },
     },
+    googleId:{
+      type:String,
+      unique:true
+    },
     password: {
       type: String,
       required: true,

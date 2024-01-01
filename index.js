@@ -4,6 +4,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const {createPassport} = require('./controller/userController');
 
 // database connection
 const connectToDatabase = require('./db/connect');
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(cookieParser());
+createPassport();
 // route connection
 const userRouter = require('./routers/userRouter');
 app.use('/users', userRouter);

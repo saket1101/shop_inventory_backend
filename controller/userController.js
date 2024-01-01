@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { generateRandomNumber } = require("../Common/utils");
 const User = require("../models/userModel");
+const passport = require("passport");
+const { Strategy } = require("passport-google-oauth20");
 
 module.exports.registerUser = async (req, res) => {
   try {
@@ -70,4 +72,38 @@ module.exports.loginUser = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+module.exports.createPassport = () => {
+  try {
+    passport.use(
+      new Strategy(
+        {
+          clientID: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          callbackURL: "/api/v1/user/getGoogleUser",
+        },
+        async function (accessToken, refreshToken, profile, done) {
+          console.log(profile);
+          const findUser = await User.findOne({email:profile.email})
+          if(!findUser){
+          const createUser = await User.create({
+            name:profile.displayName,
+            email:profile.email,
+            googleId:profile.id
+          })
+          return done (null,createUser)
+          }else{
+            return done(null, findUser);
+          }
+        }
+      )
+    );
+    passport.serializeUser(function (user, done) {
+      done(null, user);
+    });
+    passport.deserializeUser(function (user, done) {
+      done(null, user);
+    });
+  } catch (error) {}
 };
