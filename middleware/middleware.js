@@ -3,7 +3,7 @@ const User = require("../models/userModel");
 
 module.exports.authGuard = async (req, res, next) => {
   try {
-    const token = req.cookies.CraTorTech;
+    const token = req.cookies.Daredeals;
     if (!token) {
       return res.status(401).json({
         message: "Unauthorized user",

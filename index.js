@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(cookieParser());
-createPassport();
+// createPassport();
 // route connection
 const userRouter = require('./routers/userRouter');
 app.use('/users', userRouter);

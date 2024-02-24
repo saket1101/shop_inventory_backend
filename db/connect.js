@@ -11,3 +11,4 @@ let connectToDatabase = async () => {
 };
 
 module.exports = connectToDatabase;
+ 

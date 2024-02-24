@@ -5,6 +5,7 @@ const User = require("../models/userModel");
 const passport = require("passport");
 const { Strategy } = require("passport-google-oauth20");
 
+// this api for register user
 module.exports.registerUser = async (req, res) => {
   try {
     const userId = "USER" + generateRandomNumber(6);
@@ -41,6 +42,7 @@ module.exports.registerUser = async (req, res) => {
   }
 };
 
+// this api for login user
 module.exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -56,7 +58,7 @@ module.exports.loginUser = async (req, res) => {
       return res.status(422).json({ error: "Invalid credentials" });
     }
     const token = await jwt.sign({ _id: findUser._id }, process.env.JWT_SECRET);
-    res.cookie("CratorTech", token, {
+    res.cookie("Daredeals", token, {
       expiresIn: "1d",
       httpOnly: true,
     });
@@ -74,36 +76,45 @@ module.exports.loginUser = async (req, res) => {
   }
 };
 
-module.exports.createPassport = () => {
-  try {
-    passport.use(
-      new Strategy(
-        {
-          clientID: process.env.GOOGLE_CLIENT_ID,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          callbackURL: "/api/v1/user/getGoogleUser",
-        },
-        async function (accessToken, refreshToken, profile, done) {
-          console.log(profile);
-          const findUser = await User.findOne({email:profile.email})
-          if(!findUser){
-          const createUser = await User.create({
-            name:profile.displayName,
-            email:profile.email,
-            googleId:profile.id
-          })
-          return done (null,createUser)
-          }else{
-            return done(null, findUser);
-          }
-        }
-      )
-    );
-    passport.serializeUser(function (user, done) {
-      done(null, user);
-    });
-    passport.deserializeUser(function (user, done) {
-      done(null, user);
-    });
-  } catch (error) {}
+// this api for google passport authentication 
+// module.exports.createPassport = () => {
+//   try {
+//     passport.use(
+//       new Strategy(
+//         {
+//           clientID: process.env.GOOGLE_CLIENT_ID,
+//           clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//           callbackURL: "/api/v1/user/getGoogleUser",
+//         },
+//         async function (accessToken, refreshToken, profile, done) {
+//           console.log(profile);
+//           const findUser = await User.findOne({ email: profile.email });
+//           if (!findUser) {
+//             const createUser = await User.create({
+//               name: profile.displayName,
+//               email: profile.email,
+//               googleId: profile.id,
+//             });
+//             return done(null, createUser);
+//           } else {
+//             return done(null, findUser);
+//           }
+//         }
+//       )
+//     );
+//     passport.serializeUser(function (user, done) {
+//       done(null, user);
+//     });
+//     passport.deserializeUser(function (user, done) {
+//       done(null, user);
+//     });
+//   } catch (error) {}
+// };
+
+// this api for login user 
+module.exports.logoutUser =  async(req,res) => {
+  if(!req.User.userId) return res.status(404).send({status:"false",message:"User Not found"})
+  res.clearCookie("Daredeals").status(200).json({ message: "User logged out successfully" });
 };
+
+
